@@ -1,28 +1,29 @@
 #!flask/bin/python
-from flask import Flask, jsonify
+import sqlite3
+from flask import g, Flask, jsonify
 
-tasks = [
-    {
-        'id': 1,
-        'title': u'Buy groceries',
-        'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
-        'done': False
-    },
-    {
-        'id': 2,
-        'title': u'Learn Python',
-        'description': u'Need to find a good Python tutorial on the web',
-        'done': False
-    }
-]
-
+DATABASE = 'art-nn.db'
 
 app = Flask(__name__)
 
+def get_db():
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+    return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
 
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
 def get_tasks():
-    return jsonify({'tasks': tasks})
+    cur = get_db().execute("SELECT * FROM art")
+    rv = cur.fetchall()
+    cur.close()
+    return jsonify({'tasks': rv})
 
 
 @app.route('/')
