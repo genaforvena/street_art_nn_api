@@ -1,8 +1,9 @@
 #!flask/bin/python
 import sqlite3
+import os
 from flask import g, Flask, jsonify
 
-DATABASE = 'art-nn.db'
+DATABASE = 'art_nn.db'
 
 app = Flask(__name__)
 
@@ -31,6 +32,7 @@ def init_db():
 
 @app.cli.command('initdb')
 def initdb_command():
+    print('Starting db init')
     init_db()
     print('Initialized the database.')
 
