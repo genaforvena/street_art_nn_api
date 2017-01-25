@@ -1,8 +1,8 @@
 from setuptools import setup
 
 setup(
-    name='flaskr',
-    packages=['flaskr'],
+    name='street_art_nn',
+    packages=['street_art_nn'],
     include_package_data=True,
     install_requires=[
         'flask',

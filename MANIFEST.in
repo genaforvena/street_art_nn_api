@@ -1,3 +1,3 @@
-graft flaskr/templates
-graft flaskr/static
-include flaskr/schema.sql
+graft street_art_nn/templates
+graft street_art_nn/static
+include street_art_nn/schema.sql
