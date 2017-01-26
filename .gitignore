@@ -1,0 +1,7 @@
+art_nn.db
+flask/
+*.pyc
+.eggs/
+street_art_nn.egg-info/
+.DS_Store
+street_art_nn/.DS_Store
