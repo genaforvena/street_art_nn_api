@@ -104,12 +104,19 @@ def login():
             return redirect(url_for('show_entries'))
     return render_template('login.html', error=error)
 
+
 @app.route('/add', methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
     db = get_db()
-    pass
+    db.execute('INSERT INTO art (artist, title, year, image, address, lng, lat) values (?, ?, ?, ?, ?, ?, ?)',
+                [request.form["artist"], request.form["title"],
+                request.form["year"],
+                request.form["image"],
+                request.form["address"], request.form["lng"], request.form["lat"]])
+    db.commit()
+    return redirect(url_for('show_entries'))
 
 
 @app.route('/')
