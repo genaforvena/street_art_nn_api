@@ -104,11 +104,18 @@ def login():
             return redirect(url_for('show_entries'))
     return render_template('login.html', error=error)
 
+@app.route('/add', methods=['POST'])
+def add_entry():
+    if not session.get('logged_in'):
+        abort(401)
+    db = get_db()
+    pass
+
 
 @app.route('/')
-def index():
+def show_entries():
     db = get_db()
-    cur = db.execute('select title, artist, image from art order by id desc')
+    cur = db.execute('select title, artist, image, address from art order by id desc')
     entries = cur.fetchall()
     return render_template('show_entries.html', entries=entries)
 
