@@ -15,6 +15,7 @@ app.config.update(dict(
     USERNAME='admin',
     PASSWORD='default'
 ))
+app.config['JSON_AS_ASCII'] = False
 app.config.from_envvar('STREET_ART_SETTINGS', silent=True)
 
 
