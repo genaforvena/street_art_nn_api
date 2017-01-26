@@ -42,6 +42,12 @@ def import_data():
     print "Importing data from file"
     pass
 
+@app.cli.command('add_test_data')
+def add_test_data():
+    db = get_db()
+    db.execute('INSERT INTO art (artist, title, year, image, address, lng, lat) values ("artist", "title", "year", "image", "address", 24.54, 24.54)')
+    db.commit()
+
 
 def get_db():
     if not hasattr(g, 'sqlite_db'):
@@ -55,12 +61,13 @@ def close_db(error):
         g.sqlite_db.close()
 
 
-@app.route('/todo/api/v1.0/tasks', methods=['GET'])
+@app.route('/artworks/api/v1.0/artworks', methods=['GET'])
 def get_tasks():
     cur = get_db().execute("SELECT * FROM art")
     rv = cur.fetchall()
     cur.close()
-    return jsonify({'tasks': rv})
+    artworks_json = [dict(x) for x in rv]
+    return jsonify({'artworks': artworks_json})
 
 
 @app.route('/')
