@@ -1,4 +1,5 @@
 #!flask/bin/python
+import json
 import sqlite3
 import os
 from flask import g, Flask, jsonify
@@ -39,8 +40,25 @@ def initdb_command():
 
 @app.cli.command('import_data')
 def import_data():
-    print "Importing data from file"
-    pass
+    filename = os.path.join(os.path.dirname(__file__), '../util/data.json')
+    with open(filename) as f:
+        data = json.load(f)
+        db = get_db()
+        rows = []
+        for artwork in data:
+            try:
+                rows.append([artwork["artist"], artwork["name"], artwork["year"], artwork["image"],
+                                artwork["location"]["address"],
+                                artwork["location"]["lng"],
+                                artwork["location"]["lat"]])
+            except:
+                # That's probably ok to ignore data errors here
+                continue
+        for row in rows:
+            db.execute('INSERT INTO art (artist, title, year, image, address, lng, lat) values (?, ?, ?, ?, ?, ?, ?)',
+                        row)
+        db.commit()
+
 
 @app.cli.command('add_test_data')
 def add_test_data():
