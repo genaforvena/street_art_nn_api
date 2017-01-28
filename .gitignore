@@ -2,6 +2,8 @@ art_nn.db
 flask/
 *.pyc
 .eggs/
+.cache/
+tests/__pycache__/
 street_art_nn.egg-info/
 .DS_Store
 street_art_nn/.DS_Store
