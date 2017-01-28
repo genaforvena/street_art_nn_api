@@ -2,6 +2,8 @@
 import json
 import sqlite3
 import os
+
+from geopy.distance import vincenty
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
 
@@ -82,12 +84,31 @@ def close_db(error):
         g.sqlite_db.close()
 
 
-@app.route('/artworks/api/v1.0/artworks', methods=['GET'])
-def get_tasks():
+@app.route('/artworks/api/v1.0/closest', methods=['GET'])
+def get_closest_artworks():
+    """ Returns closest artworks to given location
+
+    Should pass lat, lng and limit params with GET request
+    If one of them is missing - request will just fail
+    """
+    lat = float(request.args['lat'])
+    lng = float(request.args['lng'])
+    limit = int(request.args['limit'])
+    artworks_json = _get_all_artworks()
+    
+    import pdb; pdb.set_trace()
+    pass
+
+
+def _get_all_artworks():
     cur = get_db().execute("SELECT * FROM art")
     rv = cur.fetchall()
     cur.close()
-    artworks_json = [dict(x) for x in rv]
+    return [dict(x) for x in rv]
+
+@app.route('/artworks/api/v1.0/artworks', methods=['GET'])
+def get_artworks():
+    artworks_json = _get_all_artworks()
     return jsonify({'artworks': artworks_json})
 
 
