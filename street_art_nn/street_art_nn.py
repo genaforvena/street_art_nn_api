@@ -5,7 +5,7 @@ import os
 
 from geopy.distance import vincenty
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash
+     render_template, flash, jsonify
 
 DATABASE = 'art_nn.db'
 
@@ -83,7 +83,6 @@ def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
-
 @app.route('/artworks/api/v1.0/closest', methods=['GET'])
 def get_closest_artworks():
     """ Returns closest artworks to given location
@@ -95,9 +94,18 @@ def get_closest_artworks():
     lng = float(request.args['lng'])
     limit = int(request.args['limit'])
     artworks_json = _get_all_artworks()
-    
-    import pdb; pdb.set_trace()
-    pass
+
+    def distance_km(artwork_from):
+        return vincenty((artwork_from["lat"], artwork_from["lng"]), (lat, lng)).km
+
+    def compare_by_distance(artwork1, artwork2):
+        distance1 = distance_km(artwork1)
+        distance2 = distance_km(artwork2)
+        return int(distance1 - distance2)
+
+    sorted_by_distance = sorted(artworks_json, cmp=compare_by_distance)
+
+    return jsonify({'artworks': sorted_by_distance[:limit]})
 
 
 def _get_all_artworks():
@@ -105,6 +113,7 @@ def _get_all_artworks():
     rv = cur.fetchall()
     cur.close()
     return [dict(x) for x in rv]
+
 
 @app.route('/artworks/api/v1.0/artworks', methods=['GET'])
 def get_artworks():
